@@ -1,3 +1,4 @@
+package com.cartfy.backend.gui;
 // Product.java (in your frontend project)
 public class Product {
     String name;

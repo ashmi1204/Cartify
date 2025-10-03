@@ -2,13 +2,13 @@ package com.example.demo.model;
 
 public class Product {
 
-    private Long id;
-    private String name;
-    private String description;
-    private double price;
-    private String category;
-    private String image;
-    private int quantity;
+    public Long id;
+    public String name;
+    public String description;
+    public double price;
+    public String category;
+    public String image;
+    public int quantity;
 
     public Product() {
     }
