@@ -108,7 +108,7 @@ public class RegisterScreen {
         HttpClient client = HttpClient.newHttpClient();
 
         String jsonInput = String.format(
-                "{\"name\":\"%s\", \"email\":\"%s\", \"address\":\"%s\", \"mobile\":\"%s\", \"password\":\"%s\"}",
+                "{\"customer_name\":\"%s\", \"email\":\"%s\", \"address\":\"%s\", \"mobile_no\":\"%s\", \"password\":\"%s\"}",
                 name, email, address, mobile, password
         );
 
