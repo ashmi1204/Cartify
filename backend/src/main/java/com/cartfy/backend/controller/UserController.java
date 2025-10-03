@@ -1,4 +1,4 @@
-package com.cartfy.userapi.controller;
+package com.cartfy.backend.controller;
 
 import com.cartfy.userapi.model.User;
 import org.springframework.web.bind.annotation.*;

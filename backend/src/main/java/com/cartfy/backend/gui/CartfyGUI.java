@@ -1,3 +1,4 @@
+package com.cartfy.backend.gui;
 // CartfyGUI.java
 import javax.swing.*;
 import java.awt.*;

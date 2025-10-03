@@ -1,4 +1,6 @@
-// RegisterScreen.java
+
+package com.cartfy.backend.gui;// RegisterScreen.java
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;

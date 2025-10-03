@@ -1,3 +1,4 @@
+package com.cartfy.backend.gui;
 // LoginScreen.java
 import javax.swing.*;
 import java.awt.*;
@@ -105,29 +106,57 @@ public class LoginScreen {
 
     // API Call for login
     private static String sendLoginRequest(String email, String password) {
+        // NOTE: The port is hardcoded to 8080. If your backend uses 8081, CHANGE THIS.
+        String url = BASE_URL + "/login?email=" + email + "&password=" + password;
+
         try {
             HttpClient client = HttpClient.newHttpClient();
-            String url = BASE_URL + "/login?email=" + email + "&password=" + password;
 
+            // IMPORTANT: The request is currently a POST with parameters in the URL, which is unusual.
+            // It's usually a GET request for reading or a POST/PUT with a JSON body for submission.
+            // If your backend expects a GET, change .POST(BodyPublishers.noBody()) to .GET()
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
-                    .POST(HttpRequest.BodyPublishers.noBody())
+                    .POST(HttpRequest.BodyPublishers.noBody()) // KEEP this if the backend expects POST
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            int statusCode = response.statusCode();
+            String responseBody = response.body();
 
-            JSONObject json = new JSONObject(response.body());
-            if (json.getBoolean("success")) {
-                return json.getString("message");
-            } else {
-                return "❌ " + json.getString("message");
+            // Check 1: Server returned an HTTP error
+            if (statusCode != 200) {
+                return "❌ Server returned error status: " + statusCode + ". Response: " + (responseBody.isEmpty() ? "No body" : responseBody.substring(0, Math.min(100, responseBody.length())) + "...");
             }
+
+            // Check 2: Safely parse JSON
+            if (responseBody.isEmpty()) {
+                return "❌ Server response was empty (no JSON).";
+            }
+
+            try {
+                JSONObject json = new JSONObject(responseBody);
+                if (json.has("success") && json.getBoolean("success")) {
+                    return "✅ Login successful: " + json.optString("message", "Welcome!");
+                } else if (json.has("message")) {
+                    return "❌ Login failed: " + json.getString("message");
+                } else {
+                    return "❌ Server sent ambiguous JSON response.";
+                }
+            } catch (org.json.JSONException je) {
+                // Catches the exact error you saw
+                System.err.println("JSON Parsing Error on body: " + responseBody);
+                return "❌ Invalid JSON received from server. Status: " + statusCode;
+            }
+
+        } catch (java.net.ConnectException ce) {
+            // Catches "Connection refused"
+            return "❌ Error: Connection refused. Is the Spring Boot server running on " + BASE_URL.split(":")[2].split("/")[0] + "?";
         } catch (Exception e) {
             e.printStackTrace();
-            return "❌ Error connecting to server";
+            return "❌ General Network Error: " + e.getMessage();
         }
     }
-
     private static JButton createStyledButton(String text, Color bgColor) {
         JButton button = new JButton(text);
         button.setFont(new Font("SansSerif", Font.BOLD, 14));
